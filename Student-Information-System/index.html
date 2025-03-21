@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Information System</title>
+    <!-- Add Favicon -->
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3135/3135755.png">
+    <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -42,17 +44,22 @@
     </style>
 </head>
 <body class="bg-gray-100 flex justify-center items-center min-h-screen p-4">
+    <!-- Login/Signup Container -->
     <div id="loginContainer" class="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
         <div class="text-center mb-8">
             <i class="fas fa-graduation-cap text-5xl text-blue-500 mb-4"></i>
             <h1 class="text-3xl font-bold text-blue-500">Student Information System</h1>
         </div>
+        
+        <!-- Login Form -->
         <div id="loginForm" class="flex flex-col gap-4">
             <h2 class="text-2xl font-semibold text-blue-500 text-center mb-4">Admin Login</h2>
             <input type="text" id="adminUsername" placeholder="Username" class="border p-2 rounded w-full">
             <input type="password" id="adminPassword" placeholder="Password" class="border p-2 rounded w-full">
             <button onclick="handleLogin()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Login</button>
         </div>
+
+        <!-- Signup Form -->
         <div id="signupForm" class="flex flex-col gap-4 hidden">
             <h2 class="text-2xl font-semibold text-blue-500 text-center mb-4">Admin Sign Up</h2>
             <input type="text" id="newUsername" placeholder="Username" class="border p-2 rounded w-full">
@@ -60,6 +67,8 @@
             <input type="password" id="confirmPassword" placeholder="Confirm Password" class="border p-2 rounded w-full">
             <button onclick="handleSignup()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">Sign Up</button>
         </div>
+
+        <!-- Login/Signup Toggle Buttons at Bottom -->
         <div class="flex justify-center mt-6 pt-6 border-t">
             <button onclick="showLogin()" id="loginTab" 
                 class="px-6 py-2 mx-2 font-semibold rounded-full transition-all duration-200 
@@ -69,6 +78,8 @@
                 hover:bg-blue-100" data-active="false">Sign Up</button>
         </div>
     </div>
+
+    <!-- Main System Container -->
     <div id="mainContainer" class="w-full max-w-5xl bg-white p-6 rounded-lg shadow-lg hidden">
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-3">
@@ -79,6 +90,8 @@
                 <i class="fas fa-sign-out-alt mr-2"></i>Logout
             </button>
         </div>
+        
+        <!-- Analytics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-blue-100 p-4 rounded-lg shadow-sm">
                 <div class="flex items-center justify-between">
@@ -117,6 +130,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Action Buttons -->
         <div class="flex flex-col md:flex-row justify-between items-center mt-4">
             <div class="flex gap-2">
                 <button id="addStudentBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -127,6 +142,8 @@
                 </button>
             </div>
         </div>
+
+        <!-- Student List Modal -->
         <div id="studentListModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden">
             <div class="bg-white p-6 rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
@@ -149,11 +166,16 @@
                         <option value="">All Courses</option>
                     </select>
                 </div>
+
+                <!-- Student Cards Container -->
                 <div id="studentCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Student cards will be inserted here -->
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Add this modal for adding/editing students -->
     <div id="addStudentModal" class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
@@ -222,6 +244,8 @@
             const username = document.getElementById('newUsername').value.trim();
             const password = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
             if (!username || !password || !confirmPassword) {
                 alert('Please fill in all fields');
                 return;
@@ -231,16 +255,25 @@
                 alert('Passwords do not match');
                 return;
             }
+
+            // Get existing admins or initialize empty array
             let admins = JSON.parse(localStorage.getItem('admins')) || [];
+
+            // Check if username already exists
             if (admins.some(admin => admin.username === username)) {
                 alert('Username already exists');
                 return;
             }
+
+            // Add new admin
             admins.push({
                 username: username,
-                password: password 
+                password: password // In a real app, this should be hashed
             });
+
+            // Save to localStorage
             localStorage.setItem('admins', JSON.stringify(admins));
+
             alert('Admin account created successfully!');
             showLogin();
             clearSignupForm();
@@ -255,14 +288,23 @@
         function handleLogin() {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
+
+            // Get admins from localStorage
             const admins = JSON.parse(localStorage.getItem('admins')) || [];
+
+            // Check credentials
             const admin = admins.find(a => a.username === username && a.password === password);
 
             if (admin) {
+                // Store login state
                 sessionStorage.setItem('isLoggedIn', 'true');
                 sessionStorage.setItem('currentAdmin', username);
+                
+                // Show main container and hide login
                 document.getElementById('loginContainer').classList.add('hidden');
                 document.getElementById('mainContainer').classList.remove('hidden');
+                
+                // Load initial data
                 loadStudentsFromLocalStorage();
             } else {
                 alert('Invalid credentials. Please try again.');
@@ -270,13 +312,18 @@
         }
 
         function handleLogout() {
+            // Clear login state
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('currentAdmin');
+            
+            // Show login and hide main container
             document.getElementById('loginContainer').classList.remove('hidden');
             document.getElementById('mainContainer').classList.add('hidden');
+            
+            // Clear login form
             document.getElementById('adminUsername').value = '';
             document.getElementById('adminPassword').value = '';
-            showLogin(); 
+            showLogin(); // Show login tab
         }
 
         let selectedRow = null;
@@ -303,18 +350,25 @@
 
             document.getElementById("saveStudentBtn").addEventListener("click", saveStudent);
             document.getElementById("search").addEventListener("keyup", searchStudent);
+
+            // Call showLogin on page load to set initial state
             showLogin();
         });
 
         function saveStudent() {
+            // Show loading spinner
             const saveBtn = event.target;
             const originalContent = saveBtn.innerHTML;
             saveBtn.innerHTML = '<div class="loading-spinner inline-block"></div>';
             saveBtn.disabled = true;
+
+            // Get form values
             const name = document.getElementById('name').value.trim();
             const studentId = document.getElementById('studentId').value.trim();
             const contact = document.getElementById('contact').value.trim();
             const course = document.getElementById('course').value;
+
+            // Validation
             const errors = [];
             if (!name) errors.push("Name is required");
             if (!studentId) errors.push("Student ID is required");
@@ -328,7 +382,11 @@
                 saveBtn.disabled = false;
                 return;
             }
+
+            // Get existing students
             let students = JSON.parse(localStorage.getItem('students')) || [];
+
+            // Check for duplicate student ID
             if (!selectedRow && students.some(s => s.studentId === studentId)) {
                 alert('A student with this ID already exists!');
                 saveBtn.innerHTML = originalContent;
@@ -345,14 +403,24 @@
             };
 
             if (selectedRow !== null) {
+                // Edit existing student
                 const index = selectedRow.getAttribute('data-index');
                 students[index] = newStudent;
             } else {
+                // Add new student
                 students.push(newStudent);
             }
+
+            // Save to localStorage
             localStorage.setItem('students', JSON.stringify(students));
+
+            // Update analytics immediately
             updateAnalytics();
+            
+            // Show success message
             showNotification(selectedRow ? 'Student updated successfully!' : 'Student added successfully!');
+
+            // Close modal and reset form
             setTimeout(() => {
                 closeAddModal();
                 saveBtn.innerHTML = originalContent;
@@ -393,6 +461,8 @@
                 let students = JSON.parse(localStorage.getItem("students")) || [];
                 students.splice(index, 1);
                 localStorage.setItem("students", JSON.stringify(students));
+                
+                // Update analytics after deletion
                 updateAnalytics();
                 displayFilteredStudents();
                 showNotification('Student deleted successfully!');
@@ -407,6 +477,7 @@
                 row.style.display = text.includes(filter) ? "" : "none";
             });
         }
+
         function loadStudentsFromLocalStorage() {
             const students = JSON.parse(localStorage.getItem("students")) || [];
             const tableBody = document.querySelector("#studentTable tbody");
@@ -437,11 +508,17 @@
 
         function updateAnalytics() {
             const students = JSON.parse(localStorage.getItem('students')) || [];
+            
+            // Update total students count
             const totalStudents = students.length;
             document.getElementById('totalStudentsCount').textContent = totalStudents;
+            
+            // Update total courses count (unique courses)
             const uniqueCourses = new Set(students.map(student => student.course));
             const totalCourses = uniqueCourses.size;
             document.getElementById('totalCoursesCount').textContent = totalCourses;
+            
+            // Update last update time
             const now = new Date().toLocaleString();
             document.getElementById('lastUpdate').textContent = now;
             localStorage.setItem('lastUpdate', now);
@@ -477,6 +554,7 @@
             updateCourseFilter();
             displayFilteredStudents();
 
+            // Add event listeners for search and filter
             document.getElementById('studentListSearch').addEventListener('input', displayFilteredStudents);
             document.getElementById('courseFilter').addEventListener('change', displayFilteredStudents);
         }
@@ -484,6 +562,7 @@
         function closeStudentList() {
             document.getElementById('studentListModal').classList.add('hidden');
         }
+
         function updateCourseFilter() {
             const courseFilter = document.getElementById('courseFilter');
             courseFilter.innerHTML = '<option value="">All Courses</option>';
@@ -502,6 +581,7 @@
                 courseFilter.appendChild(option);
             });
         }
+
         function displayFilteredStudents() {
             const searchTerm = document.getElementById('studentListSearch').value.toLowerCase();
             const selectedCourse = document.getElementById('courseFilter').value;
@@ -546,6 +626,8 @@
                 `;
                 container.appendChild(card);
             });
+
+            // Show message if no students found
             if (filteredStudents.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-8 text-gray-500">
@@ -554,11 +636,15 @@
                 `;
             }
         }
+
+        // Add event listener for closing modal when clicking outside
         document.getElementById('studentListModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeStudentList();
             }
         });
+
+        // Add these functions for the add student functionality
         function showAddModal() {
             document.getElementById('addStudentModal').classList.remove('hidden');
             document.getElementById('modalTitle').textContent = 'Add Student';
@@ -571,12 +657,19 @@
         }
 
         function validateContactNumber(input) {
+            // Remove any non-numeric characters
             input.value = input.value.replace(/[^0-9]/g, '');
+            
+            // Limit to 11 digits
             if (input.value.length > 11) {
                 input.value = input.value.slice(0, 11);
             }
+            
+            // Update the helper text
             const helperText = document.getElementById('contactHelper');
             helperText.textContent = `${input.value.length}/11 digits`;
+            
+            // Add visual feedback
             if (input.value.length === 11) {
                 helperText.classList.remove('text-gray-500', 'text-red-500');
                 helperText.classList.add('text-green-500');
@@ -595,6 +688,8 @@
             document.getElementById('studentId').value = '';
             document.getElementById('contact').value = '';
             document.getElementById('course').value = '';
+            
+            // Reset contact field styling
             const contactInput = document.getElementById('contact');
             const helperText = document.getElementById('contactHelper');
             contactInput.classList.remove('border-red-500', 'border-green-500');
@@ -612,20 +707,32 @@
             };
             return courses[courseCode] || courseCode;
         }
+
+        // Update your event listeners
         document.addEventListener('DOMContentLoaded', function() {
+            // ... existing DOMContentLoaded code ...
+
+            // Add event listener for Add Student button
             document.getElementById('addStudentBtn').addEventListener('click', showAddModal);
+
+            // Add event listener for clicking outside modals to close them
             document.getElementById('addStudentModal').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeAddModal();
                 }
             });
 
+            // Set current admin name
             const currentAdmin = sessionStorage.getItem('currentAdmin');
             if (currentAdmin) {
                 document.getElementById('currentAdmin').textContent = currentAdmin;
             }
+
+            // Update last update time
             updateLastUpdateTime();
         });
+
+        // Add these new functions
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in';
@@ -638,6 +745,7 @@
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
         }
+
         function updateLastUpdateTime() {
             const lastUpdate = localStorage.getItem('lastUpdate');
             const element = document.getElementById('lastUpdate');
@@ -646,6 +754,8 @@
                 element.textContent = date.toLocaleString();
             }
         }
+
+        // Add sorting functionality
         function sortStudents(field) {
             let students = JSON.parse(localStorage.getItem('students')) || [];
             students.sort((a, b) => {
